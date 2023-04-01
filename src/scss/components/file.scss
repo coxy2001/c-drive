@@ -1,0 +1,85 @@
+.file {
+    position: relative;
+    width: 100%;
+    padding: 0.5rem;
+    background-color: #353535;
+    border-radius: 0.5rem;
+    transition: background-color 100ms ease-in-out;
+
+    &:hover {
+        background-color: #464646;
+    }
+
+    &__title {
+        padding-left: 0.5rem;
+    }
+
+    &__thumbnail {
+        margin-bottom: 0.5rem;
+        padding-bottom: 80%;
+        background-color: #eee;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    &__option {
+        cursor: pointer;
+        display: block;
+        padding: 0 0.5rem;
+        transition: background-color 50ms ease-in-out;
+
+        &:hover {
+            background-color: #353535;
+        }
+        &:active {
+            background-color: #464646;
+        }
+    }
+
+    &__option-list {
+        position: absolute;
+        top: calc(100% - 4px);
+        left: 1rem;
+        width: calc(100% - 2rem);
+        margin: 0;
+        padding: 0.5rem 0;
+        list-style: none;
+        background-color: #242424;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 6px #464646;
+        z-index: 100;
+    }
+
+    &__option-button {
+        cursor: pointer;
+        position: absolute;
+        bottom: 6px;
+        right: 8px;
+        width: 1.75rem;
+        height: 1.75rem;
+        padding: 0;
+        background: none;
+        border: none;
+        border-radius: 50%;
+        box-shadow: none;
+        transition: background-color 100ms ease-in-out;
+
+        &:hover {
+            background-color: #777;
+        }
+
+        &:active {
+            background-color: #888;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 4px;
+            left: calc(50% - 2px);
+            height: 1.25rem;
+            border-left: dotted 4px #fff;
+        }
+    }
+}
