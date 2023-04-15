@@ -2,24 +2,30 @@
     import File from "./File.svelte";
 
     let folders = [];
-    for (let i = 0; i < 6; i++) {
-        folders.push({
-            name: "Folder",
-            type: "folder",
-            selected: i % 2,
-        });
-    }
-
     let files = [];
-    for (let i = 0; i < 20; i++) {
-        files.push({
-            name: "File name",
-            type: "png",
-            thumbnail:
-                "https://coxy.tech/jw__pillars-of-creation--1920x1080.jpg",
-            selected: i % 2,
-        });
-    }
+
+    document.body.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+
+        let cmWidth = 100; // contextMenu.offsetWidth
+        let cmHeight = 100; // contextMenu.offsetHeight
+        let subMenuWidth = 100;
+        let subMenuLeft = false;
+
+        let x = e.offsetX;
+        if (x > window.innerWidth - cmWidth - subMenuWidth) subMenuLeft = true;
+        if (x > window.innerWidth - cmWidth) x = window.innerWidth - cmWidth;
+
+        let y = e.offsetY;
+        if (y > window.innerHeight - cmHeight)
+            y = window.innerHeight - cmHeight;
+    });
+
+    fetch("/files/").then(async (response) => {
+        const json = await response.json();
+        folders = json.folders;
+        files = json.files;
+    });
 </script>
 
 <header class="header">

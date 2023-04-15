@@ -24,8 +24,9 @@
     }
 
     &__option {
-        cursor: pointer;
+        @extend %btn-reset;
         display: block;
+        width: 100%;
         padding: 0 0.5rem;
         transition: background-color 50ms ease-in-out;
 
@@ -52,23 +53,19 @@
     }
 
     &__option-button {
-        cursor: pointer;
+        @extend %btn-reset;
         position: absolute;
         bottom: 6px;
         right: 8px;
         width: 1.75rem;
         height: 1.75rem;
         padding: 0;
-        background: none;
-        border: none;
         border-radius: 50%;
-        box-shadow: none;
         transition: background-color 100ms ease-in-out;
 
         &:hover {
             background-color: #777;
         }
-
         &:active {
             background-color: #888;
         }

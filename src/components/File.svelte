@@ -34,9 +34,10 @@
             tabindex="-1"
             transition:fade={{ duration: 100 }}
             bind:this={optionList}
+            on:focusin={() => (options = true)}
             on:focusout={closeOptions}
             on:keydown={(e) => {
-                if (e.key == "Escape") closeOptions();
+                if (e.key == "Escape") options = false;
             }}
         >
             {#if file.type != "folder"}
@@ -49,13 +50,13 @@
                     Download
                 </a>
             {/if}
-            <div
+            <button
                 class="file__option"
                 on:click={deleteFile}
                 on:keydown={deleteFile}
             >
                 Delete
-            </div>
+            </button>
         </div>
     {/if}
 </div>
