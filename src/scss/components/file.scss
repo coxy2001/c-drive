@@ -12,6 +12,10 @@
 
     &__title {
         padding-left: 0.5rem;
+        padding-right: 1.5rem;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     &__thumbnail {

@@ -1,0 +1,7 @@
+.breadcrumbs {
+    margin-bottom: 1rem;
+
+    &__item {
+        @extend %btn-reset;
+    }
+}

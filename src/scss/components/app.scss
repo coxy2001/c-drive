@@ -38,17 +38,3 @@ p {
     margin: 0;
     margin-bottom: 1rem;
 }
-
-.grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    margin-bottom: 1rem;
-
-    &--small {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    }
-    &--large {
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    }
-}

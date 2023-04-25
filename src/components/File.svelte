@@ -1,7 +1,8 @@
 <script lang="ts">
     import { fade } from "svelte/transition";
 
-    export let file;
+    export let file,
+        navigate = (_) => {};
 
     let options = false,
         optionList: HTMLElement;
@@ -19,7 +20,12 @@
     function deleteFile() {}
 </script>
 
-<div class="file" class:file--selected={file.selected}>
+<div
+    class="file"
+    class:file--selected={file.selected}
+    on:click={() => navigate(file.name)}
+    on:keydown={() => navigate(file.name)}
+>
     {#if file.type != "folder"}
         <div
             class="file__thumbnail"
