@@ -6,7 +6,10 @@
 
         <title>C-Drive</title>
 
-        <script type="module" src="http://localhost:5173/src/main.ts"></script>
+        <script type="module" src="{{ svelte_js }}"></script>
+        {% for css in svelte_css %}
+        <link rel="stylesheet" href="{{ css }}">
+        {% endfor %}
     </head>
 
     <body></body>
