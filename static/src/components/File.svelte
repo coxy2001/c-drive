@@ -2,7 +2,7 @@
     import { fade } from "svelte/transition";
 
     export let file,
-        navigate = (_) => {};
+        action = (_) => {};
 
     let options = false,
         optionList: HTMLElement;
@@ -17,14 +17,16 @@
         options = false;
     }
 
+    function renameFile() {}
     function deleteFile() {}
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
     class="file"
     class:file--selected={file.selected}
-    on:click={() => navigate(file.name)}
-    on:keydown={() => navigate(file.name)}
+    on:click={() => action(file)}
+    on:contextmenu={openOptions}
 >
     {#if file.type != "folder"}
         <div
@@ -33,7 +35,10 @@
         />
     {/if}
     <div class="file__title">{file.name}</div>
-    <button class="file__option-button" on:click={openOptions} />
+    <button
+        class="file__option-button"
+        on:click|stopPropagation={openOptions}
+    />
     {#if options}
         <div
             class="file__option-list"
@@ -42,10 +47,14 @@
             bind:this={optionList}
             on:focusin={() => (options = true)}
             on:focusout={closeOptions}
+            on:click|stopPropagation
             on:keydown={(e) => {
-                if (e.key == "Escape") options = false;
+                if (e.key == "Escape") closeOptions();
             }}
         >
+            <button class="file__option" on:click={() => action(file)}>
+                {#if file.type == "folder"}Open{:else}Preview{/if}
+            </button>
             {#if file.type != "folder"}
                 <a
                     class="file__option"
@@ -56,13 +65,8 @@
                     Download
                 </a>
             {/if}
-            <button
-                class="file__option"
-                on:click={deleteFile}
-                on:keydown={deleteFile}
-            >
-                Delete
-            </button>
+            <button class="file__option" on:click={renameFile}>Rename</button>
+            <button class="file__option" on:click={deleteFile}>Delete</button>
         </div>
     {/if}
 </div>

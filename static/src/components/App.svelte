@@ -6,7 +6,8 @@
     let folders = [],
         files = [],
         breadcrumbs = [],
-        filesURL = new URL("/files/", DOMAIN);
+        filesURL = new URL("/files/", DOMAIN),
+        previewFile;
 
     document.body.addEventListener("contextmenu", (e) => {
         e.preventDefault();
@@ -37,15 +38,22 @@
         }
 
         fetch(filesURL).then(async (response) => {
-            const json = await response.json();
-            console.log(json);
-            folders = json.folders;
-            files = json.files;
+            if (response.ok) {
+                const json = await response.json();
+                folders = json.folders;
+                files = json.files;
+            } else {
+                console.log(response.status);
+            }
         });
     }
 
-    function navigate(name: string) {
-        breadcrumbs = [...breadcrumbs, name];
+    function navigate(file: any) {
+        breadcrumbs = [...breadcrumbs, file.name];
+    }
+
+    function preview(file: any) {
+        previewFile = file;
     }
 
     function revert(index: number) {
@@ -73,7 +81,7 @@
     {#if folders.length > 0}
         <div class="grid">
             {#each folders as folder}
-                <File file={folder} {navigate} />
+                <File file={folder} action={navigate} />
             {/each}
         </div>
     {/if}
@@ -81,8 +89,14 @@
     {#if files.length > 0}
         <div class="grid">
             {#each files as file}
-                <File {file} />
+                <File {file} action={preview} />
             {/each}
         </div>
     {/if}
 </main>
+
+{#if previewFile}
+    <div class="preview">
+        <img src={previewFile.thumbnail} alt={previewFile.name} />
+    </div>
+{/if}
