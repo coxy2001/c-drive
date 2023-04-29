@@ -24,6 +24,7 @@ SECRET_KEY = "django-insecure-s5j4+polz31o=dsia-x@h10r+xvrdu!v&lxkboklb$^#tu2x)7
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+SVELTE_DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 

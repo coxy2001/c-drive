@@ -5,12 +5,12 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 export default defineConfig({
     plugins: [svelte()],
     build: {
-        outDir: "../static/svelte/",
+        outDir: "static/dist/",
         emptyOutDir: true,
         assetsDir: "",
         manifest: true,
         rollupOptions: {
-            input: "src/main.ts",
+            input: "static/src/main.ts",
         },
     },
 });

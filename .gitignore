@@ -20,7 +20,5 @@ lerna-debug.log*
 __pycache__
 node_modules
 venv
-dist
-dist-ssr
 *.local
 *.sqlite3
