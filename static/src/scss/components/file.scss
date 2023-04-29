@@ -4,10 +4,15 @@
     padding: 0.5rem;
     background-color: #353535;
     border-radius: 0.5rem;
-    transition: background-color 100ms ease-in-out;
+    transition: background-color 100ms ease-in-out, transform 100ms ease-in-out;
 
     &:hover {
         background-color: #464646;
+    }
+
+    &--hovering {
+        background-color: #464646;
+        transform: scale(1.1);
     }
 
     &__title {

@@ -1,43 +1,24 @@
 <script lang="ts">
     import File from "./File.svelte";
 
-    const DOMAIN = "http://localhost:8000";
+    import { getFiles } from "../api";
 
     let folders = [],
         files = [],
         breadcrumbs = [],
-        filesURL = new URL("/files/", DOMAIN),
         previewFile;
 
     document.body.addEventListener("contextmenu", (e) => {
         e.preventDefault();
-
-        let cmWidth = 100; // contextMenu.offsetWidth
-        let cmHeight = 100; // contextMenu.offsetHeight
-        let subMenuWidth = 100;
-        let subMenuLeft = false;
-
-        let x = e.offsetX;
-        if (x > window.innerWidth - cmWidth - subMenuWidth) subMenuLeft = true;
-        if (x > window.innerWidth - cmWidth) x = window.innerWidth - cmWidth;
-
-        let y = e.offsetY;
-        if (y > window.innerHeight - cmHeight)
-            y = window.innerHeight - cmHeight;
     });
 
     $: {
-        if (breadcrumbs.length > 0) {
-            let path = "";
-            breadcrumbs.forEach((breadcrumb) => {
-                path += breadcrumb + "/";
-            });
-            filesURL.searchParams.set("dir", path);
-        } else {
-            filesURL.searchParams.delete("dir");
-        }
+        let dir = "";
+        breadcrumbs.forEach((breadcrumb) => {
+            dir += breadcrumb + "/";
+        });
 
-        fetch(filesURL).then(async (response) => {
+        getFiles(dir).then(async (response) => {
             if (response.ok) {
                 const json = await response.json();
                 folders = json.folders;

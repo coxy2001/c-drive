@@ -47,6 +47,7 @@ def files(request):
             folders.append(
                 {
                     "name": item.name,
+                    "path": item.path,
                     "type": "folder",
                 }
             )
@@ -54,6 +55,7 @@ def files(request):
             files.append(
                 {
                     "name": item.name,
+                    "path": item.path,
                     "type": "",
                     "thumbnail": item.path.replace(BASE_PATH, "/"),
                 }
