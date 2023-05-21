@@ -6,6 +6,7 @@ import json
 import os
 
 from .settings import BASE_PATH, SVELTE_DEBUG
+from pathlib import Path
 
 
 @login_required
@@ -65,5 +66,37 @@ def files(request):
         {
             "folders": folders,
             "files": files,
+        }
+    )
+
+
+@login_required
+def move(request):
+    data = json.loads(request.body)
+    print("data")
+    print(data)
+
+    path = ""
+    return JsonResponse(
+        {
+            "name": os.path.basename(path),
+            "path": path,
+        }
+    )
+
+
+@login_required
+def rename(request):
+    data = json.loads(request.body)
+    source = data["source"]
+    name = data["name"]
+    path = Path(source).resolve().with_name(name)
+
+    return JsonResponse(
+        {
+            "name": path.name,
+            "path": str(path),
+            "type": "",
+            "thumbnail": str(path).replace(BASE_PATH, "/"),
         }
     )

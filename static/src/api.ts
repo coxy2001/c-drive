@@ -13,7 +13,8 @@ export function moveFile(src: string, dst: string) {
     let url = new URL("move/", DOMAIN);
     const request = new Request(url, {
         method: "PUT",
-        body: `{"source": ${src}, "destination": ${dst}}`,
+        headers: { "X-CSRFToken": (window as any).csrftoken },
+        body: JSON.stringify({ source: src, destination: dst }),
     });
     return fetch(request);
 }
@@ -22,7 +23,8 @@ export function renameFile(src: string, name: string) {
     let url = new URL("rename/", DOMAIN);
     const request = new Request(url, {
         method: "PUT",
-        body: `{"source": ${src}, "name": ${name}}`,
+        headers: { "X-CSRFToken": (window as any).csrftoken },
+        body: JSON.stringify({ source: src, name: name }),
     });
     return fetch(request);
 }

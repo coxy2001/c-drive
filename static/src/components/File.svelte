@@ -1,17 +1,29 @@
 <script lang="ts">
     import { fade } from "svelte/transition";
-    import { moveFile } from "../api";
+    import { moveFile, renameFile } from "../api";
 
     export let file,
         action = (_) => {};
 
     let folder = file.type == "folder",
         showOptions = false,
+        selected = false,
         hovering = false,
         optionList: HTMLElement;
 
     // File actions
-    function actionRename() {}
+    function actionRename() {
+        const newName = prompt(
+            `Rename ${folder ? "folder" : "file"}`,
+            file.name
+        );
+        if (newName === null) return;
+
+        renameFile(file.path, newName).then(async (response) => {
+            if (response.ok) file = await response.json();
+        });
+    }
+
     function actionDelete() {}
 
     // Options
@@ -52,7 +64,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
     class="file"
-    class:file--selected={file.selected}
+    class:file--selected={selected}
     class:file--hovering={hovering}
     draggable="true"
     on:click={() => action(file)}

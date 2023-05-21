@@ -23,6 +23,8 @@ from . import settings, views
 urlpatterns = [
     path("", views.index),
     path("files/", views.files),
+    path("move/", views.move),
+    path("rename/", views.rename),
     path("accounts/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_URL)
