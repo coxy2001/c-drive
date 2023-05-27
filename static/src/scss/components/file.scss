@@ -6,8 +6,12 @@
     border-radius: 0.5rem;
     transition: background-color 100ms ease-in-out, transform 100ms ease-in-out;
 
-    &:hover {
+    &:hover:not(&--dragging) {
         background-color: #464646;
+    }
+
+    &--dragging {
+        opacity: 0.5;
     }
 
     &--hovering {

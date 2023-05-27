@@ -1,33 +1,33 @@
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 
 import json
-import os
 
 from .settings import BASE_PATH, SVELTE_DEBUG
 from pathlib import Path
 
 
 @login_required
-def index(request):
+def index(request: HttpRequest):
     svelte_js, svelte_css = svelte_files()
 
     context = {
+        "base_path": BASE_PATH.replace("\\", "\\\\"),
         "svelte_js": svelte_js,
         "svelte_css": svelte_css,
     }
     return render(request, "base.html", context)
 
 
-def svelte_files():
+def svelte_files() -> tuple[str, list[str]]:
     SVELTE_DIST = "static/dist/"
     svelte_js = "http://localhost:5173/static/src/main.ts"
     svelte_css = []
 
     if not SVELTE_DEBUG:
         with open(SVELTE_DIST + "manifest.json", "r") as file:
-            main_manifest = json.loads(file.read())["src/main.ts"]
+            main_manifest = json.loads(file.read())["static/src/main.ts"]
             svelte_js = "/" + SVELTE_DIST + main_manifest["file"]
             for css in main_manifest.get("css", []):
                 svelte_css.append("/" + SVELTE_DIST + css)
@@ -36,29 +36,29 @@ def svelte_files():
 
 
 @login_required
-def files(request):
+def files(request: HttpRequest):
     files, folders = [], []
 
-    path = BASE_PATH + request.GET.get("dir", "")
-    if not os.path.exists(path):
+    dir = Path(request.GET.get("source", BASE_PATH)).resolve()
+    if not dir.exists():
         return JsonResponse({"error": "invalid path"})
 
-    for item in os.scandir(path):
-        if item.is_dir():
+    for path in dir.iterdir():
+        if path.is_dir():
             folders.append(
                 {
-                    "name": item.name,
-                    "path": item.path,
+                    "name": path.name,
+                    "path": str(path / "X")[:-1],
                     "type": "folder",
                 }
             )
         else:
             files.append(
                 {
-                    "name": item.name,
-                    "path": item.path,
+                    "name": path.name,
+                    "path": str(path),
                     "type": "",
-                    "thumbnail": item.path.replace(BASE_PATH, "/"),
+                    "thumbnail": str(path).replace(BASE_PATH, "/"),
                 }
             )
 
@@ -71,32 +71,31 @@ def files(request):
 
 
 @login_required
-def move(request):
+def delete(request: HttpRequest):
     data = json.loads(request.body)
-    print("data")
-    print(data)
-
-    path = ""
-    return JsonResponse(
-        {
-            "name": os.path.basename(path),
-            "path": path,
-        }
-    )
+    # Path(data["source"]).unlink()
+    return JsonResponse({})
 
 
 @login_required
-def rename(request):
+def move(request: HttpRequest):
     data = json.loads(request.body)
-    source = data["source"]
-    name = data["name"]
-    path = Path(source).resolve().with_name(name)
+    print(data)
+    Path(data["source"]).rename(data["destination"])
+    return JsonResponse({})
+
+
+@login_required
+def rename(request: HttpRequest):
+    data = json.loads(request.body)
+    path = Path(data["source"])
+    path = path.rename(path.with_name(data["name"]))
 
     return JsonResponse(
         {
             "name": path.name,
             "path": str(path),
-            "type": "",
+            "type": "folder" if path.is_dir() else "",
             "thumbnail": str(path).replace(BASE_PATH, "/"),
         }
     )

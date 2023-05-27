@@ -1,30 +1,40 @@
 <script lang="ts">
     import { fade } from "svelte/transition";
-    import { moveFile, renameFile } from "../api";
+    import { deleteFile, moveFile, renameFile } from "../api";
+    import { createEventDispatcher } from "svelte";
 
-    export let file,
-        action = (_) => {};
+    export let file: Item,
+        action = (_: Item) => {};
 
-    let folder = file.type == "folder",
+    const dispatch = createEventDispatcher();
+
+    let isFolder = file.type == "folder",
         showOptions = false,
         selected = false,
+        dragging = false,
         hovering = false,
         optionList: HTMLElement;
 
     // File actions
     function actionRename() {
         const newName = prompt(
-            `Rename ${folder ? "folder" : "file"}`,
+            `Rename ${isFolder ? "folder" : "file"}`,
             file.name
         );
-        if (newName === null) return;
+        if (!newName) return;
 
         renameFile(file.path, newName).then(async (response) => {
             if (response.ok) file = await response.json();
         });
     }
 
-    function actionDelete() {}
+    function actionDelete() {
+        if (!confirm(`Delete ${isFolder ? "folder" : "file"}`)) return;
+
+        deleteFile(file.path).then(async (response) => {
+            if (response.ok) dispatch("remove");
+        });
+    }
 
     // Options
     async function openOptions() {
@@ -39,25 +49,34 @@
 
     // Drag and drop
     function dragStart(e: DragEvent) {
+        dragging = true;
+        e.dataTransfer.setData("name", file.name);
         e.dataTransfer.setData("path", file.path);
+    }
+
+    function dragEnd(e: DragEvent) {
+        dragging = false;
+        if (e.dataTransfer.dropEffect !== "none") dispatch("remove");
     }
 
     function drop(e: DragEvent) {
         hovering = false;
-        if (e.dataTransfer.getData("path") != file.path) {
-            moveFile(e.dataTransfer.getData("path"), file.path);
+        const name = e.dataTransfer.getData("name");
+        const path = e.dataTransfer.getData("path");
+        if (path != file.path) {
+            moveFile(path, file.path + name);
         }
     }
 
     function dragOver(e: DragEvent) {
-        if (folder) {
+        if (isFolder && !dragging) {
             e.preventDefault();
             hovering = true;
         }
     }
 
     function dragLeave() {
-        if (folder) hovering = false;
+        if (isFolder) hovering = false;
     }
 </script>
 
@@ -65,16 +84,18 @@
 <div
     class="file"
     class:file--selected={selected}
+    class:file--dragging={dragging}
     class:file--hovering={hovering}
     draggable="true"
     on:click={() => action(file)}
     on:contextmenu={openOptions}
     on:dragstart={dragStart}
+    on:dragend={dragEnd}
     on:drop={drop}
     on:dragover={dragOver}
     on:dragleave={dragLeave}
 >
-    {#if !folder}
+    {#if !isFolder}
         <div
             class="file__thumbnail"
             style="background-image: url({file.thumbnail});"
@@ -100,9 +121,9 @@
             }}
         >
             <button class="file__option" on:click={() => action(file)}>
-                {#if folder}Open{:else}Preview{/if}
+                {#if isFolder}Open{:else}Preview{/if}
             </button>
-            {#if !folder}
+            {#if !isFolder}
                 <a
                     class="file__option"
                     href={file.thumbnail}

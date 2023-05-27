@@ -1,14 +1,14 @@
 {
-  "src/main.css": {
-    "file": "main-3af8e677.css",
-    "src": "src/main.css"
+  "static/src/main.css": {
+    "file": "main-960e7f38.css",
+    "src": "static/src/main.css"
   },
-  "src/main.ts": {
+  "static/src/main.ts": {
     "css": [
-      "main-3af8e677.css"
+      "main-960e7f38.css"
     ],
-    "file": "main-5978dcf3.js",
+    "file": "main-af7939e2.js",
     "isEntry": true,
-    "src": "src/main.ts"
+    "src": "static/src/main.ts"
   }
 }

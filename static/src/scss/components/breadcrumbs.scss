@@ -3,5 +3,10 @@
 
     &__item {
         @extend %btn-reset;
+        transition: transform 100ms ease-in-out;
+
+        &--hovering {
+            transform: scale(1.1);
+        }
     }
 }

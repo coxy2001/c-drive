@@ -1,23 +1,21 @@
 <script lang="ts">
     import File from "./File.svelte";
-
     import { getFiles } from "../api";
+    import Breadcrumb from "./Breadcrumb.svelte";
 
-    let folders = [],
-        files = [],
-        breadcrumbs = [],
-        previewFile;
+    let folders: Item[] = [],
+        files: Item[] = [],
+        breadcrumbs: Item[] = [{ name: "Home", path: window.basePath }],
+        previewFile: Item;
 
-    document.body.addEventListener("contextmenu", (e) => {
-        e.preventDefault();
-    });
+    document.body.addEventListener("contextmenu", (e) => e.preventDefault());
 
     $: {
-        let dir = "";
-        breadcrumbs.forEach((breadcrumb) => {
-            dir += breadcrumb + "/";
-        });
+        let dir = breadcrumbs[breadcrumbs.length - 1].path;
+        updateFiles(dir);
+    }
 
+    function updateFiles(dir: string) {
         getFiles(dir).then(async (response) => {
             if (response.ok) {
                 const json = await response.json();
@@ -29,17 +27,27 @@
         });
     }
 
-    function navigate(file: any) {
-        breadcrumbs = [...breadcrumbs, file.name];
+    function navigate(file: Item) {
+        breadcrumbs = [...breadcrumbs, file];
     }
 
-    function preview(file: any) {
+    function preview(file: Item) {
         previewFile = file;
     }
 
     function revert(index: number) {
+        return () => (breadcrumbs = breadcrumbs.slice(0, index + 1));
+    }
+
+    function remove(index: number, isFolder: boolean) {
         return () => {
-            breadcrumbs = breadcrumbs.slice(0, index);
+            if (isFolder) {
+                folders.splice(index, 1);
+                folders = folders;
+            } else {
+                files.splice(index, 1);
+                files = files;
+            }
         };
     }
 </script>
@@ -50,27 +58,36 @@
 
 <main>
     <div class="breadcrumbs">
-        <button class="breadcrumbs__item" on:click={revert(0)}>Home</button>
         {#each breadcrumbs as breadcrumb, index}
-            &raquo;
-            <button class="breadcrumbs__item" on:click={revert(index + 1)}>
+            {#if index > 0}&raquo;{/if}
+            <Breadcrumb
                 {breadcrumb}
-            </button>
+                revert={revert(index)}
+                last={breadcrumbs.length == index + 1}
+            />
         {/each}
     </div>
 
     {#if folders.length > 0}
         <div class="grid">
-            {#each folders as folder}
-                <File file={folder} action={navigate} />
+            {#each folders as folder, index}
+                <File
+                    file={folder}
+                    action={navigate}
+                    on:remove={remove(index, true)}
+                />
             {/each}
         </div>
     {/if}
 
     {#if files.length > 0}
         <div class="grid">
-            {#each files as file}
-                <File {file} action={preview} />
+            {#each files as file, index}
+                <File
+                    {file}
+                    action={preview}
+                    on:remove={remove(index, false)}
+                />
             {/each}
         </div>
     {/if}
