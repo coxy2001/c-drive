@@ -1,7 +1,8 @@
 <script lang="ts">
+    import Breadcrumb from "./Breadcrumb.svelte";
     import File from "./File.svelte";
     import { getFiles } from "../api";
-    import Breadcrumb from "./Breadcrumb.svelte";
+    import type { Item } from "../types";
 
     let folders: Item[] = [],
         files: Item[] = [],

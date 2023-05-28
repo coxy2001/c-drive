@@ -132,4 +132,5 @@ LOGIN_URL = "/admin/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/admin/login/"
 
-BASE_PATH = "C:\\Users\\theco\\Pictures\\"
+BASE_PATH = Path("C:\\Users\\theco\\Pictures\\").resolve()
+STATICFILES_DIRS.append(BASE_PATH)

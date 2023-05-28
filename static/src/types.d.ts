@@ -1,4 +1,4 @@
-interface Item {
+export interface Item {
     name: string;
     path: string;
     type?: string;

@@ -13,7 +13,7 @@ def index(request: HttpRequest):
     svelte_js, svelte_css = svelte_files()
 
     context = {
-        "base_path": BASE_PATH.replace("\\", "\\\\"),
+        "base_path": str(BASE_PATH).replace("\\", "\\\\"),
         "svelte_js": svelte_js,
         "svelte_css": svelte_css,
     }
@@ -39,7 +39,10 @@ def svelte_files() -> tuple[str, list[str]]:
 def files(request: HttpRequest):
     files, folders = [], []
 
-    dir = Path(request.GET.get("source", BASE_PATH)).resolve()
+    dir = BASE_PATH
+    if "source" in request.GET:
+        dir /= request.GET["source"]
+
     if not dir.exists():
         return JsonResponse({"error": "invalid path"})
 
@@ -48,7 +51,7 @@ def files(request: HttpRequest):
             folders.append(
                 {
                     "name": path.name,
-                    "path": str(path / "X")[:-1],
+                    "path": str(path.relative_to(BASE_PATH) / "X")[:-1],
                     "type": "folder",
                 }
             )
@@ -56,9 +59,9 @@ def files(request: HttpRequest):
             files.append(
                 {
                     "name": path.name,
-                    "path": str(path),
+                    "path": str(path.relative_to(BASE_PATH)),
                     "type": "",
-                    "thumbnail": str(path).replace(BASE_PATH, "/"),
+                    "thumbnail": "/static/" + str(path.relative_to(BASE_PATH)),
                 }
             )
 
@@ -94,8 +97,8 @@ def rename(request: HttpRequest):
     return JsonResponse(
         {
             "name": path.name,
-            "path": str(path),
+            "path": str(path.relative_to(BASE_PATH)),
             "type": "folder" if path.is_dir() else "",
-            "thumbnail": str(path).replace(BASE_PATH, "/"),
+            "thumbnail": "/static/" + str(path.relative_to(BASE_PATH)),
         }
     )

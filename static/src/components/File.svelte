@@ -1,7 +1,8 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
     import { fade } from "svelte/transition";
     import { deleteFile, moveFile, renameFile } from "../api";
-    import { createEventDispatcher } from "svelte";
+    import type { Item } from "../types";
 
     export let file: Item,
         action = (_: Item) => {};

@@ -1,12 +1,10 @@
 <script lang="ts">
     import { moveFile } from "../api";
+    import type { Item } from "../types";
 
     export let breadcrumb: Item, revert: () => void, last: boolean;
 
     let hovering = false;
-
-    console.log(last);
-    
 
     function drop(e: DragEvent) {
         hovering = false;
