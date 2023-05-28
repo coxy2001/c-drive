@@ -2,7 +2,7 @@
     import { moveFile } from "../api";
     import type { Item } from "../types";
 
-    export let breadcrumb: Item, revert: () => void, last: boolean;
+    export let breadcrumb: Item, revert: VoidFunction, last: boolean;
 
     let hovering = false;
 

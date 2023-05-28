@@ -3,11 +3,13 @@
     import File from "./File.svelte";
     import { getFiles } from "../api";
     import type { Item } from "../types";
+    import PreviewModal from "./PreviewModal.svelte";
 
     let folders: Item[] = [],
         files: Item[] = [],
         breadcrumbs: Item[] = [{ name: "Home", path: window.basePath }],
-        previewFile: Item;
+        previewFile: Item | null,
+        previewOpen = false;
 
     document.body.addEventListener("contextmenu", (e) => e.preventDefault());
 
@@ -34,6 +36,7 @@
 
     function preview(file: Item) {
         previewFile = file;
+        previewOpen = true;
     }
 
     function revert(index: number) {
@@ -94,8 +97,6 @@
     {/if}
 </main>
 
-{#if previewFile}
-    <div class="preview">
-        <img src={previewFile.thumbnail} alt={previewFile.name} />
-    </div>
+{#if previewFile && previewOpen}
+    <PreviewModal file={previewFile} close={() => (previewOpen = false)} />
 {/if}

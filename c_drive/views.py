@@ -6,6 +6,7 @@ import json
 
 from .settings import BASE_PATH, SVELTE_DEBUG
 from pathlib import Path
+from urllib.parse import quote
 
 
 @login_required
@@ -48,22 +49,9 @@ def files(request: HttpRequest):
 
     for path in dir.iterdir():
         if path.is_dir():
-            folders.append(
-                {
-                    "name": path.name,
-                    "path": str(path.relative_to(BASE_PATH) / "X")[:-1],
-                    "type": "folder",
-                }
-            )
+            folders.append(path_json(path))
         else:
-            files.append(
-                {
-                    "name": path.name,
-                    "path": str(path.relative_to(BASE_PATH)),
-                    "type": "",
-                    "thumbnail": "/static/" + str(path.relative_to(BASE_PATH)),
-                }
-            )
+            files.append(path_json(path))
 
     return JsonResponse(
         {
@@ -94,11 +82,21 @@ def rename(request: HttpRequest):
     path = Path(data["source"])
     path = path.rename(path.with_name(data["name"]))
 
-    return JsonResponse(
-        {
-            "name": path.name,
-            "path": str(path.relative_to(BASE_PATH)),
-            "type": "folder" if path.is_dir() else "",
-            "thumbnail": "/static/" + str(path.relative_to(BASE_PATH)),
-        }
-    )
+    return JsonResponse(path_json(path))
+
+
+def path_json(path: Path) -> dict[str, str]:
+    data = {
+        "name": path.name,
+    }
+    if path.is_dir():
+        data["path"] = str(path.relative_to(BASE_PATH) / "X")[:-1]
+        data["type"] = "folder"
+    else:
+        data["path"] = str(path.relative_to(BASE_PATH))
+        data["type"] = ""
+        data["url"] = "/static/" + quote(str(path.relative_to(BASE_PATH)))
+        if path.stat().st_size < 3 * 1024 * 1024:
+            data["thumbnail"] = "/static/" + quote(str(path.relative_to(BASE_PATH)))
+
+    return data

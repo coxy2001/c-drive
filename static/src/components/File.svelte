@@ -4,8 +4,7 @@
     import { deleteFile, moveFile, renameFile } from "../api";
     import type { Item } from "../types";
 
-    export let file: Item,
-        action = (_: Item) => {};
+    export let file: Item, action: (_: Item) => void;
 
     const dispatch = createEventDispatcher();
 

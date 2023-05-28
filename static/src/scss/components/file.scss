@@ -42,8 +42,10 @@
         width: 100%;
         padding: 0 0.5rem;
         transition: background-color 50ms ease-in-out;
+        outline: none;
 
-        &:hover {
+        &:hover,
+        &:focus {
             background-color: #353535;
         }
         &:active {
@@ -62,6 +64,7 @@
         background-color: #242424;
         border-radius: 0.5rem;
         box-shadow: 0 0 6px #464646;
+        outline: none;
         z-index: 100;
     }
 
