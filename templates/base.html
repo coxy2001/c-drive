@@ -6,11 +6,6 @@
 
         <title>C-Drive</title>
 
-        <script>
-            window.basePath = "{{ base_path }}";
-            window.csrftoken = "{{ csrf_token }}";
-        </script>
-
         <script type="module" src="{{ svelte_js }}"></script>
         {% for css in svelte_css %}
         <link rel="stylesheet" href="{{ css }}" />

@@ -7,7 +7,7 @@
 
     let folders: Item[] = [],
         files: Item[] = [],
-        breadcrumbs: Item[] = [{ name: "Home", path: window.basePath }],
+        breadcrumbs: Item[] = [{ name: "Home", path: "" }],
         previewFile: Item | null,
         previewOpen = false;
 

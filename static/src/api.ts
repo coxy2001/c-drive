@@ -1,10 +1,7 @@
-declare global {
-    interface Window {
-        basePath: string;
-        csrftoken: string;
-    }
-}
+const getCookieValue = (name: string) =>
+    document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)")?.pop() || "";
 
+const CSRF_TOKEN = getCookieValue("csrftoken");
 const DOMAIN = "http://localhost:8000";
 
 export function getFiles(src: string) {
@@ -20,16 +17,17 @@ export function deleteFile(src: string) {
     let url = new URL("delete", DOMAIN);
     const request = new Request(url, {
         method: "DELETE",
-        headers: { "X-CSRFToken": window.csrftoken },
+        headers: { "X-CSRFToken": CSRF_TOKEN },
         body: JSON.stringify({ source: src }),
     });
     return fetch(request);
 }
+
 export function moveFile(src: string, dst: string) {
     let url = new URL("move", DOMAIN);
     const request = new Request(url, {
         method: "PUT",
-        headers: { "X-CSRFToken": window.csrftoken },
+        headers: { "X-CSRFToken": CSRF_TOKEN },
         body: JSON.stringify({ source: src, destination: dst }),
     });
     return fetch(request);
@@ -39,7 +37,7 @@ export function renameFile(src: string, name: string) {
     let url = new URL("rename", DOMAIN);
     const request = new Request(url, {
         method: "PUT",
-        headers: { "X-CSRFToken": window.csrftoken },
+        headers: { "X-CSRFToken": CSRF_TOKEN },
         body: JSON.stringify({ source: src, name: name }),
     });
     return fetch(request);

@@ -24,11 +24,12 @@
 <div
     class="preview-modal"
     tabindex="-1"
+    bind:this={modal}
     on:click={close}
     on:keydown={(e) => {
         if (e.key == "Escape") close();
     }}
-    bind:this={modal}
+    on:contextmenu|stopPropagation
     transition:fade={{ duration: 200 }}
     on:introstart={() => {
         dialogFly = false;

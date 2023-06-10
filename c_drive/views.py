@@ -64,22 +64,21 @@ def files(request: HttpRequest):
 @login_required
 def delete(request: HttpRequest):
     data = json.loads(request.body)
-    # Path(data["source"]).unlink()
+    # Path(BASE_PATH / data["source"]).unlink()
     return JsonResponse({})
 
 
 @login_required
 def move(request: HttpRequest):
     data = json.loads(request.body)
-    print(data)
-    Path(data["source"]).rename(data["destination"])
+    Path(BASE_PATH / data["source"]).rename(BASE_PATH / data["destination"])
     return JsonResponse({})
 
 
 @login_required
 def rename(request: HttpRequest):
     data = json.loads(request.body)
-    path = Path(data["source"])
+    path = Path(BASE_PATH / data["source"])
     path = path.rename(path.with_name(data["name"]))
 
     return JsonResponse(path_json(path))

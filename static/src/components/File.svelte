@@ -39,12 +39,11 @@
     // Options
     async function openOptions() {
         showOptions = true;
-        await optionList;
-        optionList.focus();
     }
 
-    function closeOptions() {
-        showOptions = false;
+    function closeOptions(event?) {
+        if (!event || !optionList.contains(event.relatedTarget))
+            showOptions = false;
     }
 
     // Drag and drop
@@ -111,14 +110,15 @@
         <div
             class="file__option-list"
             tabindex="-1"
-            transition:fade={{ duration: 100 }}
             bind:this={optionList}
-            on:focusin={() => (showOptions = true)}
-            on:focusout={closeOptions}
             on:click|stopPropagation
             on:keydown={(e) => {
                 if (e.key == "Escape") closeOptions();
             }}
+            on:focusin={openOptions}
+            on:focusout={closeOptions}
+            transition:fade={{ duration: 100 }}
+            on:introstart={() => optionList.focus()}
         >
             <button class="file__option" on:click={() => action(file)}>
                 {#if isFolder}Open{:else}Preview{/if}
@@ -126,7 +126,7 @@
             {#if !isFolder}
                 <a
                     class="file__option"
-                    href={file.thumbnail}
+                    href={file.url}
                     target="_blank"
                     download
                 >
