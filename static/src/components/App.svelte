@@ -11,7 +11,14 @@
         previewFile: Item | null,
         previewOpen = false;
 
+    window.addEventListener("popstate", (e) => {
+        if (typeof e.state === "object") breadcrumbs = e.state;
+    });
     document.body.addEventListener("contextmenu", (e) => e.preventDefault());
+
+    const data = new URLSearchParams(window.location.search).get("path");
+    if (data) breadcrumbs = JSON.parse(atob(data));
+    else window.history.replaceState(breadcrumbs, "", "/");
 
     $: {
         let dir = breadcrumbs[breadcrumbs.length - 1].path;
@@ -30,8 +37,19 @@
         });
     }
 
+    function pushHistory() {
+        let dir = breadcrumbs[breadcrumbs.length - 1].path;
+        if (dir) {
+            let data = btoa(JSON.stringify(breadcrumbs));
+            window.history.pushState(breadcrumbs, "", `?path=${data}`);
+        } else {
+            window.history.pushState(breadcrumbs, "", "/");
+        }
+    }
+
     function navigate(file: Item) {
         breadcrumbs = [...breadcrumbs, file];
+        pushHistory();
     }
 
     function preview(file: Item) {
@@ -40,7 +58,10 @@
     }
 
     function revert(index: number) {
-        return () => (breadcrumbs = breadcrumbs.slice(0, index + 1));
+        return () => {
+            breadcrumbs = breadcrumbs.slice(0, index + 1);
+            pushHistory();
+        };
     }
 
     function remove(index: number, isFolder: boolean) {

@@ -97,7 +97,9 @@
     {#if !isFolder}
         <div
             class="file__thumbnail"
-            style="background-image: url({file.thumbnail});"
+            style={file.thumbnail
+                ? `background-image: url(${file.thumbnail});`
+                : ""}
         />
     {/if}
     <div class="file__title">{file.name}</div>
