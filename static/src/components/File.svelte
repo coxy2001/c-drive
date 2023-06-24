@@ -86,6 +86,8 @@
     class:file--dragging={dragging}
     class:file--hovering={hovering}
     draggable="true"
+    tabindex="-1"
+    role="gridcell"
     on:click={() => action(file)}
     on:contextmenu={openOptions}
     on:dragstart={dragStart}
@@ -112,6 +114,7 @@
         <div
             class="file__option-list"
             tabindex="-1"
+            role="button"
             bind:this={optionList}
             on:click|stopPropagation
             on:keydown={(e) => {

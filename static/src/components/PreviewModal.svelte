@@ -24,6 +24,7 @@
 <div
     class="preview-modal"
     tabindex="-1"
+    role="presentation"
     bind:this={modal}
     on:click={close}
     on:keydown={(e) => {
@@ -42,6 +43,7 @@
     <div
         class="preview-modal__dialog"
         class:preview-modal__dialog--fly={dialogFly}
+        role="presentation"
         on:click|stopPropagation
         on:keypress|stopPropagation
     >

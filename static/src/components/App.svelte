@@ -83,7 +83,7 @@
     </div>
 
     {#if folders.length > 0}
-        <div class="grid">
+        <div class="grid" role="grid">
             {#each folders as folder, index}
                 <File
                     file={folder}
@@ -95,7 +95,7 @@
     {/if}
 
     {#if files.length > 0}
-        <div class="grid">
+        <div class="grid" role="grid">
             {#each files as file, index}
                 <File
                     {file}

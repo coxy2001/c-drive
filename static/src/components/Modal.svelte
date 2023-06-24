@@ -21,6 +21,7 @@
 
 <div
     class="modal"
+    role="presentation"
     on:click={close}
     on:keypress={close}
     transition:fade={{ duration: 200 }}
@@ -34,6 +35,7 @@
     <div
         class="modal__dialog"
         class:modal__dialog--fly={dialogFly}
+        role="presentation"
         on:click|stopPropagation
         on:keypress|stopPropagation
     >
