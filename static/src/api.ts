@@ -2,10 +2,10 @@ const getCookieValue = (name: string) =>
     document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)")?.pop() || "";
 
 const CSRF_TOKEN = getCookieValue("csrftoken");
-const DOMAIN = "http://localhost:8000";
+const BASE = "http://localhost:8000/api/";
 
 export function getFiles(src: string) {
-    let url = new URL("files", DOMAIN);
+    let url = new URL("files", BASE);
 
     if (src) url.searchParams.set("source", src);
     else url.searchParams.delete("source");
@@ -14,7 +14,7 @@ export function getFiles(src: string) {
 }
 
 export function deleteFile(src: string) {
-    let url = new URL("delete", DOMAIN);
+    let url = new URL("delete", BASE);
     const request = new Request(url, {
         method: "DELETE",
         headers: { "X-CSRFToken": CSRF_TOKEN },
@@ -24,7 +24,7 @@ export function deleteFile(src: string) {
 }
 
 export function moveFile(src: string, dst: string) {
-    let url = new URL("move", DOMAIN);
+    let url = new URL("move", BASE);
     const request = new Request(url, {
         method: "PUT",
         headers: { "X-CSRFToken": CSRF_TOKEN },
@@ -34,7 +34,7 @@ export function moveFile(src: string, dst: string) {
 }
 
 export function renameFile(src: string, name: string) {
-    let url = new URL("rename", DOMAIN);
+    let url = new URL("rename", BASE);
     const request = new Request(url, {
         method: "PUT",
         headers: { "X-CSRFToken": CSRF_TOKEN },

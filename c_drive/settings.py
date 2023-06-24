@@ -10,7 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import os
+
+from dotenv import load_dotenv
 from pathlib import Path
+
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,11 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-s5j4+polz31o=dsia-x@h10r+xvrdu!v&lxkboklb$^#tu2x)7"
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-SVELTE_DEBUG = True
+DEBUG = os.getenv("DJANGO_DEBUG", "true") == "true"
+SVELTE_DEBUG = os.getenv("SVELTE_DEBUG", "false") == "true"
 
 ALLOWED_HOSTS = ["*"]
 
@@ -38,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "settings.apps.SettingsConfig",
 ]
 
 MIDDLEWARE = [
@@ -132,5 +139,5 @@ LOGIN_URL = "/admin/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/admin/login/"
 
-BASE_PATH = Path("C:\\Users\\theco\\Pictures\\").resolve()
+BASE_PATH = Path(os.getenv("BASE_PATH", "/")).resolve()
 STATICFILES_DIRS.append(BASE_PATH)
