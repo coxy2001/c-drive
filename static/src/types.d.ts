@@ -5,3 +5,9 @@ export interface Item {
     url?: string;
     thumbnail?: string;
 }
+
+export interface FilesResponse {
+    breadcrumbs: Item[];
+    folders: Item[];
+    files: Item[];
+}

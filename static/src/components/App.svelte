@@ -2,33 +2,30 @@
     import Breadcrumb from "./Breadcrumb.svelte";
     import File from "./File.svelte";
     import { getFiles } from "../api";
-    import type { Item } from "../types";
+    import type { FilesResponse, Item } from "../types";
     import PreviewModal from "./PreviewModal.svelte";
 
-    let folders: Item[] = [],
+    let currentPath: string | null,
+        breadcrumbs: Item[] = [],
+        folders: Item[] = [],
         files: Item[] = [],
-        breadcrumbs: Item[] = [{ name: "Home", path: "" }],
         previewFile: Item | null,
         previewOpen = false;
 
-    window.addEventListener("popstate", (e) => {
-        if (typeof e.state === "object") breadcrumbs = e.state;
-    });
+    window.addEventListener("popstate", (e) => (currentPath = e.state));
     document.body.addEventListener("contextmenu", (e) => e.preventDefault());
 
-    const data = new URLSearchParams(window.location.search).get("path");
-    if (data) breadcrumbs = JSON.parse(atob(data));
-    else window.history.replaceState(breadcrumbs, "", "/");
+    currentPath = new URLSearchParams(window.location.search).get("path");
 
     $: {
-        let dir = breadcrumbs[breadcrumbs.length - 1].path;
-        updateFiles(dir);
+        updateFiles(currentPath);
     }
 
-    function updateFiles(dir: string) {
+    function updateFiles(dir: string | null) {
         getFiles(dir).then(async (response) => {
             if (response.ok) {
-                const json = await response.json();
+                const json: FilesResponse = await response.json();
+                breadcrumbs = json.breadcrumbs;
                 folders = json.folders;
                 files = json.files;
             } else {
@@ -37,31 +34,23 @@
         });
     }
 
-    function pushHistory() {
-        let dir = breadcrumbs[breadcrumbs.length - 1].path;
-        if (dir) {
-            let data = btoa(JSON.stringify(breadcrumbs));
-            window.history.pushState(breadcrumbs, "", `?path=${data}`);
-        } else {
-            window.history.pushState(breadcrumbs, "", "/");
-        }
+    function pushHistory(dir: string | null) {
+        if (window.history.state != dir)
+            window.history.pushState(
+                dir,
+                "",
+                dir ? `?path=${encodeURIComponent(dir)}` : "/"
+            );
     }
 
     function navigate(file: Item) {
-        breadcrumbs = [...breadcrumbs, file];
-        pushHistory();
+        currentPath = file.path;
+        pushHistory(currentPath);
     }
 
     function preview(file: Item) {
         previewFile = file;
         previewOpen = true;
-    }
-
-    function revert(index: number) {
-        return () => {
-            breadcrumbs = breadcrumbs.slice(0, index + 1);
-            pushHistory();
-        };
     }
 
     function remove(index: number, isFolder: boolean) {
@@ -87,7 +76,7 @@
             {#if index > 0}&raquo;{/if}
             <Breadcrumb
                 {breadcrumb}
-                revert={revert(index)}
+                action={navigate}
                 last={breadcrumbs.length == index + 1}
             />
         {/each}

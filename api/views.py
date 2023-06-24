@@ -13,12 +13,18 @@ def files(request: HttpRequest):
     files, folders = [], []
 
     base = request.user.profile.path()
-    dir = base
+    dir = Path(base)
     if "source" in request.GET:
         dir /= request.GET["source"]
 
     if not dir.exists():
         return JsonResponse({"error": "invalid path"})
+
+    breadcrumbs = [{"name": "Home", "path": ""}]
+    current_path = Path(base)
+    for path in dir.relative_to(base).parts:
+        current_path /= path
+        breadcrumbs.append(_path_json(current_path, base))
 
     for path in dir.iterdir():
         if path.is_dir():
@@ -28,6 +34,7 @@ def files(request: HttpRequest):
 
     return JsonResponse(
         {
+            "breadcrumbs": breadcrumbs,
             "folders": folders,
             "files": files,
         }

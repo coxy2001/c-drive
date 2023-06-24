@@ -4,7 +4,7 @@ const getCookieValue = (name: string) =>
 const CSRF_TOKEN = getCookieValue("csrftoken");
 const BASE = "http://localhost:8000/api/";
 
-export function getFiles(src: string) {
+export function getFiles(src: string | null) {
     let url = new URL("files", BASE);
 
     if (src) url.searchParams.set("source", src);

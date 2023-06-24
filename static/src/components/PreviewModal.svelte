@@ -11,12 +11,12 @@
     const documentWidth = document.documentElement.clientWidth;
     const scrollbarWidth = Math.abs(window.innerWidth - documentWidth);
     if (scrollbarWidth > 0) {
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
+        document.body.style.marginRight = `${scrollbarWidth}px`;
     }
     document.body.style.overflowY = "hidden";
 
     onDestroy(() => {
-        document.body.style.paddingRight = null;
+        document.body.style.marginRight = null;
         document.body.style.overflowY = null;
     });
 </script>

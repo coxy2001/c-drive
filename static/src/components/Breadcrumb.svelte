@@ -2,7 +2,7 @@
     import { moveFile } from "../api";
     import type { Item } from "../types";
 
-    export let breadcrumb: Item, revert: VoidFunction, last: boolean;
+    export let breadcrumb: Item, action: (_: Item) => void, last: boolean;
 
     let hovering = false;
 
@@ -30,7 +30,7 @@
 <button
     class="breadcrumbs__item"
     class:breadcrumbs__item--hovering={hovering}
-    on:click={revert}
+    on:click={() => action(breadcrumb)}
     on:drop={drop}
     on:dragover={dragOver}
     on:dragleave={dragLeave}
