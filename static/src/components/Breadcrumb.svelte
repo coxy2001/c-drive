@@ -10,7 +10,7 @@
         hovering = false;
         const name = e.dataTransfer.getData("name");
         const path = e.dataTransfer.getData("path");
-        if (path != breadcrumb.path + name) {
+        if (name && path) {
             moveFile(path, breadcrumb.path + name);
         }
     }

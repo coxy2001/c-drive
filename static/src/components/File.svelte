@@ -62,7 +62,7 @@
         hovering = false;
         const name = e.dataTransfer.getData("name");
         const path = e.dataTransfer.getData("path");
-        if (path != file.path) {
+        if (name && path) {
             moveFile(path, file.path + name);
         }
     }
