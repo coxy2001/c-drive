@@ -1,25 +1,27 @@
 <script lang="ts">
+    import { fade } from "svelte/transition";
     import Breadcrumb from "./Breadcrumb.svelte";
     import File from "./File.svelte";
-    import { getFiles } from "../api";
-    import type { FilesResponse, Item } from "../types";
     import PreviewModal from "./PreviewModal.svelte";
+    import { getFiles, uploadFiles } from "../api";
+    import type { FilesResponse, Item } from "../types";
 
     let currentPath: string | null,
         breadcrumbs: Item[] = [],
         folders: Item[] = [],
         files: Item[] = [],
+        hovering = false,
         previewFile: Item | null,
-        previewOpen = false;
+        previewOpen = false,
+        upload = false,
+        progress: HTMLProgressElement;
 
     window.addEventListener("popstate", (e) => (currentPath = e.state));
     document.body.addEventListener("contextmenu", (e) => e.preventDefault());
 
     currentPath = new URLSearchParams(window.location.search).get("path");
 
-    $: {
-        updateFiles(currentPath);
-    }
+    $: updateFiles(currentPath);
 
     function updateFiles(dir: string | null) {
         getFiles(dir).then(async (response) => {
@@ -64,6 +66,42 @@
             }
         };
     }
+
+    function drop(e: DragEvent) {
+        e.preventDefault();
+        hovering = false;
+        if (e.dataTransfer.types.includes("Files")) {
+            const ajax = new XMLHttpRequest();
+            ajax.upload.addEventListener("progress", (event) => {
+                let percent = Math.round((event.loaded / event.total) * 100);
+                progress.value = percent;
+            });
+            ajax.addEventListener("load", (event) => {
+                updateFiles(currentPath);
+                setTimeout(() => (upload = false), 1000);
+            });
+            ajax.addEventListener("error", (event) => {
+                alert("Upload failed");
+            });
+            ajax.addEventListener("abort", (event) => {
+                alert("Upload aborted");
+            });
+
+            upload = true;
+            uploadFiles(currentPath || "", e.dataTransfer.files, ajax);
+        }
+    }
+
+    function dragOver(e: DragEvent) {
+        if (e.dataTransfer.types.includes("Files")) {
+            e.preventDefault();
+            hovering = true;
+        }
+    }
+
+    function dragLeave(e: DragEvent) {
+        hovering = false;
+    }
 </script>
 
 <header class="header">
@@ -95,17 +133,40 @@
     {/if}
 
     {#if files.length > 0}
-        <div class="grid" role="grid">
-            {#each files as file, index}
-                <File
-                    {file}
-                    action={preview}
-                    on:remove={remove(index, false)}
-                />
-            {/each}
+        <div
+            class="dropzone"
+            class:dropzone--hovering={hovering}
+            role="button"
+            tabindex="-1"
+            on:drop={drop}
+            on:dragover={dragOver}
+            on:dragleave={dragLeave}
+        >
+            <div class="grid" role="grid">
+                {#each files as file, index}
+                    <File
+                        {file}
+                        action={preview}
+                        on:remove={remove(index, false)}
+                    />
+                {/each}
+            </div>
         </div>
     {/if}
 </main>
+
+{#if upload}
+    <div class="upload" transition:fade={{ duration: 200 }}>
+        <div class="upload__container">
+            <progress
+                class="upload__progress"
+                value="0"
+                max="100"
+                bind:this={progress}
+            />
+        </div>
+    </div>
+{/if}
 
 {#if previewFile && previewOpen}
     <PreviewModal file={previewFile} close={() => (previewOpen = false)} />

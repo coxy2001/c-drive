@@ -45,7 +45,7 @@ def files(request: HttpRequest):
 def delete(request: HttpRequest):
     data = json.loads(request.body)
     base = request.user.profile.path()
-    # Path(base / data["source"]).unlink()
+    Path(base / data["source"]).unlink()
     return JsonResponse({})
 
 
@@ -64,6 +64,20 @@ def rename(request: HttpRequest):
     path = Path(base / data["source"])
     path = path.rename(path.with_name(data["name"]))
     return JsonResponse(_path_json(path, base))
+
+
+@login_required
+def upload(request: HttpRequest):
+    path = Path(request.user.profile.path())
+    if request.POST["destination"]:
+        path /= request.POST["destination"]
+
+    for _, file in request.FILES.items():
+        with open(path / file.name, "wb") as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+
+    return JsonResponse({})
 
 
 def _path_json(path: Path, base: Path) -> dict[str, str]:
