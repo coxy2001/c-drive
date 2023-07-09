@@ -23,4 +23,4 @@ venv
 *.local
 *.sqlite3
 
-.env
+.env*

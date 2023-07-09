@@ -2,7 +2,7 @@ const getCookieValue = (name: string) =>
     document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)")?.pop() || "";
 
 const CSRF_TOKEN = getCookieValue("csrftoken");
-const BASE = "http://localhost:8000/api/";
+const BASE = import.meta.env.VITE_API_URL;
 
 export function getFiles(src: string | null) {
     const url = new URL("files", BASE);
@@ -13,7 +13,11 @@ export function getFiles(src: string | null) {
     return fetch(url);
 }
 
-export function uploadFiles(dst: string, files: FileList, ajax: XMLHttpRequest) {
+export function uploadFiles(
+    dst: string,
+    files: FileList,
+    ajax: XMLHttpRequest
+) {
     const url = new URL("upload", BASE);
 
     const upload_data = new FormData();
