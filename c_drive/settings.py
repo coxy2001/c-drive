@@ -140,5 +140,7 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/admin/login/"
 
 BASE_PATH = Path(os.getenv("BASE_PATH", "/")).resolve()
-STATIC_ROOT = BASE_PATH
-STATICFILES_DIRS.append(BASE_PATH)
+if DEBUG:
+    STATICFILES_DIRS.append(BASE_PATH)
+else:
+    STATIC_ROOT = BASE_PATH

@@ -22,3 +22,5 @@ node_modules
 venv
 *.local
 *.sqlite3
+
+.env
