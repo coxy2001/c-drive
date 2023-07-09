@@ -1,13 +1,13 @@
 {
   "static/src/main.css": {
-    "file": "main-e57fc05e.css",
+    "file": "main-c5fa236d.css",
     "src": "static/src/main.css"
   },
   "static/src/main.ts": {
     "css": [
-      "main-e57fc05e.css"
+      "main-c5fa236d.css"
     ],
-    "file": "main-6e9e1952.js",
+    "file": "main-d9478bd9.js",
     "isEntry": true,
     "src": "static/src/main.ts"
   }
