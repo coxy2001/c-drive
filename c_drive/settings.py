@@ -33,7 +33,7 @@ DEBUG = os.getenv("DJANGO_DEBUG", "true") == "true"
 SVELTE_DEBUG = os.getenv("SVELTE_DEBUG", "false") == "true"
 
 ALLOWED_HOSTS = ["*"]
-
+CSRF_TRUSTED_ORIGINS = ['https://drive.coxy.tech']
 
 # Application definition
 
